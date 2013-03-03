@@ -28,7 +28,6 @@ class Cliente:
             self.soquete.connect((self.host, self.porta))
             return True
         except Exception, error:
-            print error[0]
             return False
 
     def enviar_mensagem(self, mensagem):
@@ -66,7 +65,6 @@ def realiza_operacao(operacao, n1, n2):
         cliente = Cliente(servidor, settings.PORTA_FUNCOES)
         if cliente.conecta_servidor():
             cliente.enviar_mensagem('{0}_{1}_{2}_'.format(operacao, n1, n2))
-            cliente.enviar_mensagem(operacao)
             resposta = cliente.receber_mensagem()
             cliente.fechar_conexao()
             print resposta
@@ -82,6 +80,7 @@ if __name__ == '__main__':
         print ('\t\t1 - Soma: ')
         print ('\t\t2 - Produto: ')
         print ('\t\t3 - Divisão: ')
+        print ('\t\t4 - Fatorial: ')
         print ('\t\t0 - Sair: ')
         print ('\nForneça sua opção:' )
         op = input()
@@ -113,7 +112,12 @@ if __name__ == '__main__':
             realiza_operacao(settings.DIVISAO, n1, n2)
             r = raw_input('Forneça uma tecla para continuar...')
 
-        if op < 0 or op > 3:
+        if op == 4:
+            n1 = input('Forneça um número: ')
+            realiza_operacao(settings.FATORIAL, n1, 'NADA')
+            r = raw_input('Forneça uma tecla para continuar...')
+
+        if op < 0 or op > 4:
             print('Opção incorreta!')
             r = raw_input('Forneça uma tecla para continuar...')
 

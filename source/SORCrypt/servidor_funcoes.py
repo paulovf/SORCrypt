@@ -27,30 +27,44 @@ def divisao(conexao, valores):
     """
     Envia ao cliente a divisão de dois valores.
     """
-    print int(valores[1]) / int(valores[2])
     conexao.send('{0}'.format(int(valores[1]) / int(valores[2])))
+
+
+def fatorial(conexao, valores):
+    """
+    Envia ao cliente o fatorial de um número.
+    """
+    soma = 1
+    for i in range(2, int(valores[1]) + 1):
+        soma *= i
+    conexao.send('{0}'.format(soma))
 
 
 def trata_cliente(conexao, endereco):
     """
     Trata as novas requisições dos clientes.
     """
-    print endereco
 
     requisicao = conexao.recv(1024)
     requisicao = requisicao.split('_')
+
+    print 'Endereço: {0} Requisição: {1}'.format(endereco[0], requisicao[0])
 
     # Requisição de soma.
     if requisicao[0] == settings.SOMA:
         soma(conexao, requisicao)
 
     # Requisição de produto.
-    if requisicao[0] == settings.PRODUTO:
+    elif requisicao[0] == settings.PRODUTO:
         produto(conexao, requisicao)
 
     # Requisição de divisao.
     elif requisicao[0] == settings.DIVISAO:
         divisao(conexao, requisicao)
+
+    # Requisição de divisao.
+    elif requisicao[0] == settings.FATORIAL:
+        fatorial(conexao, requisicao)
 
     # Após a requisição ser realizada, a conexão é fechada.
     conexao.close()

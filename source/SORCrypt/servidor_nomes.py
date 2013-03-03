@@ -15,7 +15,6 @@ def verifica_funcao(funcao):
     """
     Busca as funções dos servidores de funcoes.
     """
-    print funcao
     servidores = []
     dados = open(settings.SERVIDORES).read()
     arq = loads(dados)
@@ -31,19 +30,16 @@ def trata_cliente(conexao, endereco):
     """
     Trata as novas requisições dos clientes.
     """
-    print endereco
-    funcao = conexao.recvfrom(settings.TAM_MSG)
-    print '>>> {0}'.format(funcao)
-    servidores = verifica_funcao(funcao)
+
+    requisicao = conexao.recvfrom(settings.TAM_MSG)
+
+    print 'Endereço: {0} Requisição: {1}'.format(endereco[0], requisicao[0])
+
+    servidores = verifica_funcao(requisicao[0])
 
     # Requisição autorizada.
     if len(servidores) != 0:
-        print servidores
-        print 'aqui 1'
-        print servidores[0]
-        print servidores
         conexao.send(servidores[0])
-        print 'aqui 2'
 
     # Após a requisição ser realizada, a conexão é fechada.
     conexao.close()

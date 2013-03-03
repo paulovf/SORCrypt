@@ -1,4 +1,4 @@
 [
-	[ "127.0.0.1", "SOMA", "SUBTRACAO" ], 
-	[ "127.0.0.1", "DIVISAO", "PRODUTO" ]
+	[ "127.0.0.1", "SOMA", "DIVI" ], 
+	[ "127.0.0.1", "PROD", "FATO" ]
 ]
