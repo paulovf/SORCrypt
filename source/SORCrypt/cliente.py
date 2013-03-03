@@ -69,4 +69,4 @@ def realiza_operacao(operacao, n1, n2):
             cliente.fechar_conexao()
             return resposta
     else:
-        return 'Impossível Calcular'
+        return 'ERRO'

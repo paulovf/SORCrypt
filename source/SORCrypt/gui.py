@@ -15,12 +15,15 @@ class Calculadora:
     """
 
     def __init__(self):
-        self.window = Gtk.Window()
-        self.window.set_title("SORCrypt")
-        self.window.set_size_request(250, 280)
-        self.window.connect("destroy",Gtk.main_quit)
-        self.window.set_resizable(False)
-        self.window.set_position(Gtk.WindowPosition.CENTER)
+        self.janela = Gtk.Window()
+        self.janela.set_title("SORCrypt")
+        self.janela.set_size_request(250, 280)
+        self.janela.connect("destroy",Gtk.main_quit)
+        self.janela.set_resizable(False)
+        self.janela.set_position(Gtk.WindowPosition.CENTER)
+
+        self.status_bar = Gtk.Statusbar()
+        self.context_id = self.status_bar.get_context_id('status')
 
         self.toolbar = CustomToolbar()
         self.toolbar.set_hexpand(True)
@@ -28,7 +31,7 @@ class Calculadora:
         self.botaoHelp = Gtk.ToolButton(stock_id=Gtk.STOCK_HELP)
         self.botaoHelp.set_is_important(True)
         self.botaoHelp.set_label('Sobre o SORCrypt')
-        self.botaoHelp.connect('clicked', self.chamar_help, self.window)
+        self.botaoHelp.connect('clicked', self.chamar_help, self.janela)
         
         self.botaoQuit = Gtk.ToolButton(stock_id=Gtk.STOCK_QUIT)
         self.botaoQuit.set_is_important(True)
@@ -40,6 +43,7 @@ class Calculadora:
         self.tabela = Gtk.Table(6,4,False)
 
         self.campoTexto = Gtk.Entry()
+        self.campoTexto.set_editable(False)
         self.campoTexto.set_size_request(10, 30)
         self.tabela.attach(self.campoTexto,0,4,0,1)
 
@@ -126,17 +130,24 @@ class Calculadora:
         self.layout = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
 
         self.layout.pack_start(self.toolbar, False, False, 0)
-        self.layout.pack_end(self.tabela, True, True, 0)
+        self.layout.pack_start(self.tabela, True, True, 0)
+        self.layout.pack_end(self.status_bar, False, True, 0)
 
-        self.window.add(self.layout)
+        self.janela.add(self.layout)
 
-        self.window.show_all()
+        self.janela.show_all()
         
-    def insereCampoTexto(self, widget, operacao):
+    def insereCampoTexto(self, widget, valor):
         """
         Atualiza o texto atual do campo de texto.
         """
-        self.campoTexto.insert_text(operacao, position = 20)
+        self.campoTexto.insert_text(valor, position = 20)
+
+    def atualizaStatusBar(self, texto):
+        """
+        Atualiza a mensagem de texto da barra de status.
+        """
+        self.status_bar.push(self.context_id, texto)
 
     def calcular(self, widget, operacao):
         """
@@ -177,17 +188,28 @@ class Calculadora:
             resultado = 0
             if self.tipoOperacao == 1:
                 resultado = realiza_operacao(settings.SOMA, n1, n2)
+                self.atualizaStatusBar('Realizando operacao de SOMA...')
             elif self.tipoOperacao == 2:
                 resultado = realiza_operacao(settings.SUBTRACAO, n1, n2)
+                self.atualizaStatusBar('Realizando operacao de SUBTRACAO...')
             elif self.tipoOperacao == 3:
                 resultado = realiza_operacao(settings.PRODUTO, n1, n2)
+                self.atualizaStatusBar('Realizando operacao de PRODUTO...')
             elif self.tipoOperacao == 4:
                 resultado = realiza_operacao(settings.DIVISAO, n1, n2)
+                self.atualizaStatusBar('Realizando operacao de DIVISAO...')
             elif self.tipoOperacao == 5:
                 resultado = realiza_operacao(settings.PORCENTAGEM, n1, n2)
+                self.atualizaStatusBar('Realizando operacao de PORCENTAGEM...')
             elif self.tipoOperacao == 6:
                 resultado = realiza_operacao(settings.FATORIAL, n1, n2)
-            self.campoTexto.set_text(str(resultado))
+                self.atualizaStatusBar('Realizando operacao de FATORIAL...')
+            if resultado == 'ERRO':
+                self.campoTexto.set_text('')
+                self.atualizaStatusBar('Erro ao Realizar Operacao...')
+            else:
+                self.atualizaStatusBar('Sucesso ao Realizar Operacao!')
+                self.campoTexto.set_text(str(resultado))
 
     def chamar_help(self, evento, janela):
         DialogoHelp(janela)
