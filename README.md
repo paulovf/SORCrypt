@@ -10,6 +10,7 @@ O _SORCrypt_ foi desenvolvido utilizando a interface gráfica GTK 3.0. A criptog
 
 ## Desenvolvedores #
 Charles Tim Batista Garrocho
+
 Paulo Vitor Francisco
 
 ## Screenshots #
