@@ -67,57 +67,6 @@ def realiza_operacao(operacao, n1, n2):
             cliente.enviar_mensagem('{0}_{1}_{2}_'.format(operacao, n1, n2))
             resposta = cliente.receber_mensagem()
             cliente.fechar_conexao()
-            print resposta
+            return resposta
     else:
-        print 'Não foi possível se Conectar.'
-
-
-if __name__ == '__main__':
-    op = 1
-    while op != 0:
-        system('clear')
-        print('\t\t\t\tOperações Remotas\n\n')
-        print ('\t\t1 - Soma: ')
-        print ('\t\t2 - Produto: ')
-        print ('\t\t3 - Divisão: ')
-        print ('\t\t4 - Fatorial: ')
-        print ('\t\t0 - Sair: ')
-        print ('\nForneça sua opção:' )
-        op = input()
-
-        if op == 0:
-            r = raw_input('Forneça uma tecla para continuar...')
-
-        if op == 1:
-            n1 = input('Forneça o primeiro número: ')
-            n2 = input('Forneça o segundo número: ')
-            realiza_operacao(settings.SOMA, n1, n2)
-            r = raw_input('Forneça uma tecla para continuar...')
-
-        if op == 2:
-            n1 = input('Forneça o primeiro número: ')
-            n2 = input('Forneça o segundo número: ')
-            realiza_operacao(settings.PRODUTO, n1, n2)
-            r = raw_input('Forneça uma tecla para continuar...')
-
-        if op == 3:
-            n1 = input('Forneça o número: ')
-            aux = 0
-            while aux == 0:
-                n2 = input('Forneça o segundo número: ')
-                if n2 < 1:
-                    print('Forneça um número maior que zero!')
-                else:
-                    aux = 1
-            realiza_operacao(settings.DIVISAO, n1, n2)
-            r = raw_input('Forneça uma tecla para continuar...')
-
-        if op == 4:
-            n1 = input('Forneça um número: ')
-            realiza_operacao(settings.FATORIAL, n1, 'NADA')
-            r = raw_input('Forneça uma tecla para continuar...')
-
-        if op < 0 or op > 4:
-            print('Opção incorreta!')
-            r = raw_input('Forneça uma tecla para continuar...')
-
+        return 'Impossível Calcular'

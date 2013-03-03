@@ -13,21 +13,28 @@ def soma(conexao, valores):
     """
     Envia ao cliente a soma de dois valores.
     """
-    conexao.send('{0}'.format(int(valores[1]) + int(valores[2])))
+    conexao.send('{0}'.format(float(valores[1]) + float(valores[2])))
 
 
 def produto(conexao, valores):
     """
     Envia ao cliente o produto de dois valores.
     """
-    conexao.send('{0}'.format(int(valores[1]) * int(valores[2])))
+    conexao.send('{0}'.format(float(valores[1]) * float(valores[2])))
 
 
 def divisao(conexao, valores):
     """
     Envia ao cliente a divisão de dois valores.
     """
-    conexao.send('{0}'.format(int(valores[1]) / int(valores[2])))
+    conexao.send('{0}'.format(float(valores[1]) / float(valores[2])))
+
+
+def porcentagem(conexao, valores):
+    """
+    Envia ao cliente a porcentagem de dois valores.
+    """
+    conexao.send('{0}'.format(float(valores[1]) % float(valores[2])))
 
 
 def fatorial(conexao, valores):
@@ -65,6 +72,10 @@ def trata_cliente(conexao, endereco):
     # Requisição de divisao.
     elif requisicao[0] == settings.FATORIAL:
         fatorial(conexao, requisicao)
+
+    # Requisição de porcentagem.
+    elif requisicao[0] == settings.PORCENTAGEM:
+        porcentagem(conexao, requisicao)
 
     # Após a requisição ser realizada, a conexão é fechada.
     conexao.close()
