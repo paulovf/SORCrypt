@@ -7,6 +7,7 @@ Modulo responsável por realizar as requisições ao servidor de nomes do softwa
 import socket
 import settings
 from sys import argv
+from os import system
 
 class Cliente:
     """
@@ -51,7 +52,7 @@ class Cliente:
         self.soquete.close()
 
 
-def realiza_operacao(operacao, valores):
+def realiza_operacao(operacao, n1, n2):
     """
     Realiza uma determinada operação com um servidor.
     """
@@ -60,14 +61,12 @@ def realiza_operacao(operacao, valores):
 
         cliente.enviar_mensagem(operacao)
         servidor = cliente.receber_mensagem()
-        print servidor
+
         cliente.fechar_conexao()
         cliente = Cliente(servidor, settings.PORTA_FUNCOES)
         if cliente.conecta_servidor():
             cliente.enviar_mensagem(operacao)
-            print operacao
-            print '{0}_{1}'.format(valores[0], valores[1])
-            cliente.enviar_mensagem('{0}_{1}'.format(valores[0], valores[1]))
+            cliente.enviar_mensagem('{0}_{1}'.format(n1, n2))
             resposta = cliente.receber_mensagem()
             cliente.fechar_conexao()
             print resposta
@@ -76,7 +75,45 @@ def realiza_operacao(operacao, valores):
 
 
 if __name__ == '__main__':
-	if len(argv) == 3:
-		realiza_operacao(argv[1], argv[2].split('_'))
-	else:
-		print '<operacao> <valores separados de um _ >'
+    op = 1
+    while op != 0:
+        system('clear')
+        print('\t\t\t\tOperações Remotas\n\n')
+        print ('\t\t1 - Soma: ')
+        print ('\t\t2 - Produto: ')
+        print ('\t\t3 - Divisão: ')
+        print ('\t\t0 - Sair: ')
+        print ('\nForneça sua opção:' )
+        op = input()
+
+        if op == 0:
+            r = raw_input('Forneça uma tecla para continuar...')
+
+        if op == 1:
+            n1 = input('Forneça o primeiro número: ')
+            n2 = input('Forneça o segundo número: ')
+            realiza_operacao('SOMA', n1, n2)
+            r = raw_input('Forneça uma tecla para continuar...')
+
+        if op == 2:
+            n1 = input('Forneça o primeiro número: ')
+            n2 = input('Forneça o segundo número: ')
+            realiza_operacao('PROD', n1, n2)
+            r = raw_input('Forneça uma tecla para continuar...')
+
+        if op == 3:
+            n1 = input('Forneça o número: ')
+            aux = 0
+            while aux == 0:
+                n2 = input('Forneça o segundo número: ')
+                if n2 < 1:
+                    print('Forneça um número maior que zero!')
+                else:
+                    aux = 1
+            realiza_operacao('DIV', n1, n2)
+            r = raw_input('Forneça uma tecla para continuar...')
+
+        if op < 0 or op > 3:
+            print('Opção incorreta!')
+            r = raw_input('Forneça uma tecla para continuar...')
+
