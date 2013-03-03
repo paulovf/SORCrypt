@@ -7,4 +7,5 @@ O _SORCrypt_ é um software open-source desenvolvido com a linguagem de programa
 
 ## Desenvolvedores #
 Paulo Vitor Francisco
+
 Charles Tim Batista Garrocho
