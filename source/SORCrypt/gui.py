@@ -195,13 +195,13 @@ class Calculadora:
 
 def DialogoHelp(janela):
     """
-    Exibe um dialogo de erro com uma determinada mensagem.
+    Exibe um dialogo de informações do software.
     """
-    dialog = Gtk.MessageDialog(janela, message_type=Gtk.MessageType.INFO, text='SORCrypt')
-    dialog.set_title('SORCrypt')
-    dialog.format_secondary_text('Servidor de Operacoes Remotas Criptografadas\n\nDesenvolvedores:\nCharles Tim Batista Garrocho\nPaulo Vitor Francisco')
-    dialog.run()
-    #dialog.destroy()
+    dialogo = Gtk.MessageDialog(janela, message_type=Gtk.MessageType.INFO, buttons=Gtk.ButtonsType.OK, text='Informacoes do Software')
+    dialogo.set_title('SORCrypt')
+    dialogo.format_secondary_text('Nome:\nServidor de Operacoes Remotas Criptografadas\n\nDesenvolvedores:\nCharles Tim Batista Garrocho\nPaulo Vitor Francisco')
+    dialogo.run()
+    dialogo.destroy()
 
 
 class CustomToolbar(Gtk.Toolbar):
