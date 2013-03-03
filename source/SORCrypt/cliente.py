@@ -28,8 +28,8 @@ class Cliente:
             self.soquete.connect((self.host, self.porta))
             return True
         except Exception, error:
-			print error[0]
-			return False
+            print error[0]
+            return False
 
     def enviar_mensagem(self, mensagem):
         """
@@ -92,13 +92,13 @@ if __name__ == '__main__':
         if op == 1:
             n1 = input('Forneça o primeiro número: ')
             n2 = input('Forneça o segundo número: ')
-            realiza_operacao('SOMA', n1, n2)
+            realiza_operacao(settings.SOMA, n1, n2)
             r = raw_input('Forneça uma tecla para continuar...')
 
         if op == 2:
             n1 = input('Forneça o primeiro número: ')
             n2 = input('Forneça o segundo número: ')
-            realiza_operacao('PROD', n1, n2)
+            realiza_operacao(settings.PRODUTO, n1, n2)
             r = raw_input('Forneça uma tecla para continuar...')
 
         if op == 3:
@@ -110,7 +110,7 @@ if __name__ == '__main__':
                     print('Forneça um número maior que zero!')
                 else:
                     aux = 1
-            realiza_operacao('DIV', n1, n2)
+            realiza_operacao(settings.DIVISAO, n1, n2)
             r = raw_input('Forneça uma tecla para continuar...')
 
         if op < 0 or op > 3:

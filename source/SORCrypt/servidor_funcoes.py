@@ -27,6 +27,7 @@ def divisao(conexao, valores):
     """
     Envia ao cliente a divisão de dois valores.
     """
+    print int(valores[1]) / int(valores[2])
     conexao.send('{0}'.format(int(valores[1]) / int(valores[2])))
 
 
@@ -37,9 +38,7 @@ def trata_cliente(conexao, endereco):
     print endereco
 
     requisicao = conexao.recv(1024)
-    print requisicao
     requisicao = requisicao.split('_')
-    print requisicao
 
     # Requisição de soma.
     if requisicao[0] == settings.SOMA:
@@ -64,12 +63,10 @@ def loop_servidor():
     soquete = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     soquete.bind((settings.HOST_FUNCOES, settings.PORTA_FUNCOES))
     soquete.listen(settings.LISTEN)
-    print '1'
 
     # Fica aqui aguardando novas conexões.
     while True:
         # Para cada nova conexão é criado um novo processo para tratar as requisições.
-        print '2'
         Thread(target=trata_cliente, args=(soquete.accept())).start()
 
 
