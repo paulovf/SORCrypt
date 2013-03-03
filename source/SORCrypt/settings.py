@@ -21,4 +21,4 @@ FUNCOES = 'FUNC'
 # Tamanho das Mensagens de requisicao.
 TAM_MSG = 6
 
-SERVIDORES = 'nomes.txt'
+SERVIDORES = '../arquivo/nomes.txt'
