@@ -7,7 +7,7 @@ Modulo responsavel pelas configuracoes globais do software.
 # Host (Ip do Servidor), PORTA (Porta do Servidor), LISTEN (maquinas)
 HOST_NOMES = '127.0.0.1'
 HOST_FUNCOES = '127.0.0.1'
-PORTA_NOMES = 6559
+PORTA_NOMES = 6555
 PORTA_FUNCOES = 4455
 LISTEN = 5
 

@@ -55,6 +55,7 @@ def realiza_operacao(operacao, valores):
     """
     Realiza uma determinada operação com um servidor.
     """
+    print valores
     cliente = Cliente(settings.HOST_NOMES, settings.PORTA_NOMES)
     if cliente.conecta_servidor():
 
@@ -64,10 +65,8 @@ def realiza_operacao(operacao, valores):
         cliente.fechar_conexao()
         cliente = Cliente(servidor, settings.PORTA_FUNCOES)
         if cliente.conecta_servidor():
-            cliente.enviar_mensagem(operacao)
-            print operacao
-            print '{0}_{1}'.format(valores[0], valores[1])
-            cliente.enviar_mensagem('{0}_{1}'.format(valores[0], valores[1]))
+            cliente.enviar_mensagem('{0}_{1}_{2}'.format(operacao, valores[0], valores[1]))
+            print '{0}_{1}_{2}'.format(operacao, valores[0], valores[1])
             resposta = cliente.receber_mensagem()
             cliente.fechar_conexao()
             print resposta

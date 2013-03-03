@@ -9,36 +9,25 @@ import settings
 from threading import Thread
 
 
-def soma(conexao):
+def soma(conexao, valores):
     """
     Envia ao cliente a soma de dois valores.
     """
-    print 'aqui 1'
-    valores = conexao.recv(1024)
-    print 'aqui 2'
-    valores = valores.split('_')
-    print valores.split('_')
-    print 'aqui 3'
-    conexao.send('{0}'.format(int(valores[0]) + int(valores[1])))
-    print 'aqui 4'
+    conexao.send('{0}'.format(int(valores[1]) + int(valores[2])))
 
 
-def produto(conexao):
+def produto(conexao, valores):
     """
     Envia ao cliente o produto de dois valores.
     """
-    valores = conexao.recv(1024)
-    valores = valores.split('_')
-    conexao.send('{0}'.format(int(valores[0]) * int(valores[1])))
+    conexao.send('{0}'.format(int(valores[1]) * int(valores[2])))
 
 
-def divisao(conexao):
+def divisao(conexao, valores):
     """
     Envia ao cliente a divisão de dois valores.
     """
-    valores = conexao.recv(1024)
-    valores = valores.split('_')
-    conexao.send('{0}'.format(int(valores[0]) / int(valores[1])))
+    conexao.send('{0}'.format(int(valores[1]) / int(valores[2])))
 
 
 def trata_cliente(conexao, endereco):
@@ -46,23 +35,23 @@ def trata_cliente(conexao, endereco):
     Trata as novas requisições dos clientes.
     """
     print endereco
-    
-    print '3'
-    requisicao = conexao.recv(settings.TAM_MSG)
-    print '4'
+
+    requisicao = conexao.recv(1024)
     print requisicao
+    requisicao = requisicao.split('_')
+    print requisicao
+
     # Requisição de soma.
-    if requisicao == settings.SOMA:
-        print 'aqui'
-        soma(conexao)
+    if requisicao[0] == settings.SOMA:
+        soma(conexao, requisicao)
 
     # Requisição de produto.
-    if requisicao == settings.PRODUTO:
-        produto(conexao)
+    if requisicao[0] == settings.PRODUTO:
+        produto(conexao, requisicao)
 
     # Requisição de divisao.
-    elif requisicao == settings.DIVISAO:
-        divisao(conexao)
+    elif requisicao[0] == settings.DIVISAO:
+        divisao(conexao, requisicao)
 
     # Após a requisição ser realizada, a conexão é fechada.
     conexao.close()
