@@ -156,6 +156,7 @@ class Calculadora:
         """
         if operacao == 'Clr':
 	        self.campoTexto.set_text("")
+	        self.atualizaStatusBar("")
         elif operacao == 'CE':
 	        self.campoTexto.set_text("0")		
         elif operacao == '+':
