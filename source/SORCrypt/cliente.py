@@ -6,6 +6,8 @@ Modulo responsável por realizar as requisições ao servidor de nomes do softwa
 
 import socket
 import settings
+from funcoes_crypt import Funcoes_crypt
+from arquivo_objeto import Arquivo_objeto
 from sys import argv
 from os import system
 
@@ -18,6 +20,7 @@ class Cliente:
         self.host = host
         self.porta = porta
         self.soquete = None
+        self.lista_chaves = []
 
     def conecta_servidor(self):
         """
@@ -30,19 +33,22 @@ class Cliente:
         except Exception, error:
             return False
 
-    def enviar_mensagem(self, mensagem):
+    def enviar_mensagem(self, mensagem, chave):
         """
         Conecta a um host e porta, e envia a mensagem.
         """
-        self.soquete.send(mensagem)
+        objeto = Funcoes_crypt().criptografar_mensagem(mensagem, chave)
+        msg = Arquivo_objeto(objeto).gerar_arquivo_objeto()
+        self.soquete.send(msg)
 
-    def receber_mensagem(self):
+    def receber_mensagem(self, chave):
         """
         Recebe uma mensagem. O parametro tam pode ser definido.
-        """
+        """        
         tam=1024
-        print 'aqui'
-        return self.soquete.recv(tam)
+        dados = self.soquete.recv(settings.TAM_MSG)
+        objeto = Arquivo_objeto(dados).obter_objeto_arquivo()
+        return Funcoes_crypt().descriptografar_mensagem(objeto, chave)
 
     def fechar_conexao(self):
         """
@@ -51,22 +57,27 @@ class Cliente:
         self.soquete.close()
 
 
-def realiza_operacao(operacao, n1, n2):
+def realiza_operacao(operacao, n1, n2, lista_chaves):
     """
     Realiza uma determinada operação com um servidor.
     """
     cliente = Cliente(settings.HOST_NOMES, settings.PORTA_NOMES)
     if cliente.conecta_servidor():
 
-        cliente.enviar_mensagem(operacao)
-        servidor = cliente.receber_mensagem()
-
+        cliente.enviar_mensagem(operacao, lista_chaves[2])
+        servidor = cliente.receber_mensagem(lista_chaves[0])
         cliente.fechar_conexao()
+        """
+        Obtém a chave pública do servidor de funções
+        """
+        lista_chaves.append(Funcoes_crypt().troca_chaves_servidor_funcoes(servidor, lista_chaves[1]))
         cliente = Cliente(servidor, settings.PORTA_FUNCOES)
+        
         if cliente.conecta_servidor():
-            cliente.enviar_mensagem('{0}_{1}_{2}_'.format(operacao, n1, n2))
-            resposta = cliente.receber_mensagem()
+
+            cliente.enviar_mensagem('{0}_{1}_{2}_'.format(operacao, n1, n2), lista_chaves[3])
+            resposta = cliente.receber_mensagem(lista_chaves[0])
             cliente.fechar_conexao()
             return resposta
     else:
-        return 'ERRO'
+        return 'Impossível Calcular'
