@@ -14,10 +14,14 @@ Charles Tim Batista Garrocho
 Paulo Vitor Francisco
 
 ## Screenshots #
-Tela Inicial:
+### Tela Inicial:
 
 ![alt text](https://raw.github.com/CharlesGarrocho/SORCrypt/master/samples/tela_inicial.png "Tela Inicial")
 
-Tela Sobre o Software:
+### Tela Interação entre os Servidores:
+
+![alt text](https://raw.github.com/CharlesGarrocho/SORCrypt/master/samples/tela_servidores.png "Tela Interação Servidores")
+
+### Tela Sobre o Software:
 
 ![alt text](https://raw.github.com/CharlesGarrocho/SORCrypt/master/samples/tela_help.png "Tela Sobre o Software")
