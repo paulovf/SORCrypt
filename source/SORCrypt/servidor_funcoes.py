@@ -5,112 +5,116 @@ Modulo responsavel por tratar as requisições como soma, divisao do software.
 """
 
 import socket
+import pickle
 import settings
 from threading import Thread
-from funcoes_crypt import Funcoes_crypt
-from arquivo_objeto import Arquivo_objeto
+from Crypto.PublicKey import RSA
+from Crypto.Util import randpool
 
 
-lista_chaves = []
-
-def soma(conexao, valores, chave):
+def soma(conexao, valores):
     """
     Envia ao cliente a soma de dois valores.
     """
-    mensagem = '{0}'.format(float(valores[1]) + float(valores[2]))
-    objeto = Funcoes_crypt().criptografar_mensagem(mensagem, chave)
-    msg = Arquivo_objeto(objeto).gerar_arquivo_objeto()
-    conexao.send(msg)
-    
-def subtracao(conexao, valores, chave):
+    try:
+        return '{0}'.format(float(valores[1]) + float(valores[2]))
+    except:
+        return 'ERRO'
+
+
+def subtracao(conexao, valores):
     """
     Envia ao cliente a subtração de dois valores.
     """
-    mensagem = '{0}'.format(float(valores[1]) - float(valores[2]))
-    objeto = Funcoes_crypt().criptografar_mensagem(mensagem, chave)
-    msg = Arquivo_objeto(objeto).gerar_arquivo_objeto()
-    conexao.send(msg)    
+    try:
+        return '{0}'.format(float(valores[1]) - float(valores[2]))
+    except:
+        return 'ERRO'
 
 
-def produto(conexao, valores, chave):
+def produto(conexao, valores):
     """
     Envia ao cliente o produto de dois valores.
     """
-    mensagem = '{0}'.format(float(valores[1]) * float(valores[2]))
-    objeto = Funcoes_crypt().criptografar_mensagem(mensagem, chave)
-    msg = Arquivo_objeto(objeto).gerar_arquivo_objeto()
-    conexao.send(msg)    
+    try:
+        return '{0}'.format(float(valores[1]) * float(valores[2]))
+    except:
+        return 'ERRO'
 
 
-def divisao(conexao, valores, chave):
+def divisao(conexao, valores):
     """
     Envia ao cliente a divisão de dois valores.
     """
-    mensagem = '{0}'.format(float(valores[1]) / float(valores[2]))
-    objeto = Funcoes_crypt().criptografar_mensagem(mensagem, chave)
-    msg = Arquivo_objeto(objeto).gerar_arquivo_objeto()
-    conexao.send(msg)      
+    try:
+        return '{0}'.format(float(valores[1]) / float(valores[2]))
+    except:
+        return 'ERRO'
 
 
-def porcentagem(conexao, valores, chave):
+def porcentagem(conexao, valores):
     """
     Envia ao cliente a porcentagem de dois valores.
     """
-    mensagem = '{0}'.format(float(valores[1]) % float(valores[2]))
-    objeto = Funcoes_crypt().criptografar_mensagem(mensagem, chave)
-    msg = Arquivo_objeto(objeto).gerar_arquivo_objeto()
-    conexao.send(msg)      
-    
+    try:
+        return '{0}'.format(float(valores[1]) % float(valores[2]))
+    except:
+        return 'ERRO'
 
-def fatorial(conexao, valores, chave):
+
+def fatorial(conexao, valores):
     """
     Envia ao cliente o fatorial de um número.
     """
-    soma = 1
-    for i in range(2, int(valores[1]) + 1):
-        soma *= i
-        
-    mensagem = '{0}'.format(soma)
-    objeto = Funcoes_crypt().criptogtafar_mensagem(mensagem, chave)
-    msg = Arquivo_objeto(objeto).gerar_arquivo_objeto()
-    conexao.send(msg)          
+    try:
+        soma = 1
+        for i in range(2, int(valores[1]) + 1):
+            soma *= i
+        return '{0}'.format(soma) 
+    except:
+        return 'ERRO'        
 
 
-def trata_cliente(conexao, endereco):
+def trata_cliente(conexao, endereco, chavePrivada, chavePublica):
     """
     Trata as novas requisições dos clientes.
     """
-    global lista_chaves
-    dados = conexao.recv(1024)
-    objeto = Arquivo_objeto(dados).obter_objeto_arquivo()
-    requisicao = Funcoes_crypt().descriptografar_mensagem(objeto, lista_chaves[0])
-    requisicao = requisicao.split('_')
+    
+    chavePublicaCliente = pickle.loads(conexao.recv(1024))
+    conexao.send(pickle.dumps(chavePublica))
 
-    print 'Endereço: {0} Requisição: {1}'.format(endereco[0], requisicao[0])
+    requisicao = chavePrivada.decrypt(conexao.recv(1024))
+    requisicao = requisicao.split('_')
+    resposta = 'ERRO'
+    
+    print 'Endereço: {0} Requisição: {1}'.format(endereco, requisicao[0])
 
     # Requisição de soma.
     if requisicao[0] == settings.SOMA:
-        soma(conexao, requisicao, lista_chaves[2])
+        resposta = soma(conexao, requisicao)
         
     # Requisição de sobtração.
     elif requisicao[0] == settings.SUBTRACAO:
-        subtracao(conexao, requisicao, lista_chaves[2])        
+        resposta = subtracao(conexao, requisicao)        
 
     # Requisição de produto.
     elif requisicao[0] == settings.PRODUTO:
-        produto(conexao, requisicao, lista_chaves[2])
+        resposta = produto(conexao, requisicao)
 
     # Requisição de divisao.
     elif requisicao[0] == settings.DIVISAO:
-        divisao(conexao, requisicao, lista_chaves[2])
+        resposta = divisao(conexao, requisicao)
 
     # Requisição de divisao.
     elif requisicao[0] == settings.FATORIAL:
-        fatorial(conexao, requisicao, lista_chaves[2])
+        resposta = fatorial(conexao, requisicao)
 
     # Requisição de porcentagem.
     elif requisicao[0] == settings.PORCENTAGEM:
-        porcentagem(conexao, requisicao, lista_chaves[2])
+        resposta = porcentagem(conexao, requisicao)
+    
+    resposta = chavePublicaCliente.encrypt(resposta.encode('ascii', 'ignore'), 32)[0]
+    conexao.send(resposta)
 
     # Após a requisição ser realizada, a conexão é fechada.
     conexao.close()
@@ -118,46 +122,28 @@ def trata_cliente(conexao, endereco):
 
 def loop_servidor():
     """
-    Aguarda a chegada da chave pública do cliente
+    Cria um novo soquete e aguarda conexoes.
     """
-    global lista_chaves
     
-    """
-    Gera as chaves do servidor de funções
-    """
-    lista_chaves.append(Funcoes_crypt().gerar_chaves_de_criptografia())
-    
-    """
-    Gera a chave pública do servidor de funções
-    """
-    lista_chaves.append(Funcoes_crypt().obter_chave_publica(lista_chaves[0]))
-    
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.bind((settings.HOST_FUNCOES, settings.PORTA_ENVIO_SERVIDOR_FUNCOES))
-    dados, cliente = s.recvfrom(settings.TAM_MSG)
-    s.close()
-    
-    """
-    Salva a chave pública do cliente
-    """
-    lista_chaves.append(Arquivo_objeto(dados).obter_objeto_arquivo())
-    
-        
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.sendto(Arquivo_objeto(lista_chaves[1]).gerar_arquivo_objeto(), (cliente[0], settings.PORTA_ENVIO_CLIENTE))
-    s.close()
+    arqPoll = randpool.RandomPool()
+    chavePrivada = RSA.generate(1024, arqPoll.get_bytes)
+    chavePublica = chavePrivada.publickey()
 
-    """
-    Abre um novo soquete servidor para tratar as novas conexões do cliente.
-    """
     soquete = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     soquete.bind((settings.HOST_FUNCOES, settings.PORTA_FUNCOES))
     soquete.listen(settings.LISTEN)
 
     # Fica aqui aguardando novas conexões.
     while True:
+
         # Para cada nova conexão é criado um novo processo para tratar as requisições.
-        Thread(target=trata_cliente, args=(soquete.accept())).start()
+        conexao = soquete.accept()
+        novaConexao = []
+        novaConexao.append(conexao[0])
+        novaConexao.append(conexao[1])
+        novaConexao.append(chavePrivada)
+        novaConexao.append(chavePublica)
+        Thread(target=trata_cliente, args=(novaConexao)).start()
 
 
 if __name__  == '__main__':

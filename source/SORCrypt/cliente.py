@@ -6,49 +6,51 @@ Modulo responsável por realizar as requisições ao servidor de nomes do softwa
 
 import socket
 import settings
-from funcoes_crypt import Funcoes_crypt
-from arquivo_objeto import Arquivo_objeto
+import pickle
 from sys import argv
 from os import system
+from Crypto.PublicKey import RSA
+from Crypto.Util import randpool
+
 
 class Cliente:
     """
     Esta Classe permite criar conexões com um determinado host em uma determinada porta.
     """
 
-    def __init__(self, host, porta):
-        self.host = host
-        self.porta = porta
+    def __init__(self):
         self.soquete = None
-        self.lista_chaves = []
+        arqPoll = randpool.RandomPool()
+        self.chavePrivada = RSA.generate(1024, arqPoll.get_bytes)
+        self.chavePublica = self.chavePrivada.publickey()
 
-    def conecta_servidor(self):
+    def conecta_servidor(self, host, porta):
         """
         Retorna o estado da conexão do servidor.
         """
         try:
             self.soquete = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            self.soquete.connect((self.host, self.porta))
+            self.soquete.connect((host, porta))
             return True
         except Exception, error:
             return False
 
-    def enviar_mensagem(self, mensagem, chave):
+    def enviar_mensagem(self, mensagem):
         """
         Conecta a um host e porta, e envia a mensagem.
         """
-        objeto = Funcoes_crypt().criptografar_mensagem(mensagem, chave)
-        msg = Arquivo_objeto(objeto).gerar_arquivo_objeto()
-        self.soquete.send(msg)
+        self.soquete.send(pickle.dumps(self.chavePublica))
+        msgChavePublicaServidor = self.soquete.recv(1024)
+        chavePublicaServidor = pickle.loads(msgChavePublicaServidor)
+        msgCriptografada = chavePublicaServidor.encrypt(mensagem, 32)[0]
+        self.soquete.send(msgCriptografada)
 
-    def receber_mensagem(self, chave):
+    def receber_mensagem(self):
         """
         Recebe uma mensagem. O parametro tam pode ser definido.
         """        
-        tam=1024
-        dados = self.soquete.recv(settings.TAM_MSG)
-        objeto = Arquivo_objeto(dados).obter_objeto_arquivo()
-        return Funcoes_crypt().descriptografar_mensagem(objeto, chave)
+        respostaCriptografada = self.soquete.recv(1024)
+        return self.chavePrivada.decrypt(respostaCriptografada)
 
     def fechar_conexao(self):
         """
@@ -57,27 +59,24 @@ class Cliente:
         self.soquete.close()
 
 
-def realiza_operacao(operacao, n1, n2, lista_chaves):
+def realiza_operacao(operacao, n1, n2):
     """
     Realiza uma determinada operação com um servidor.
     """
-    cliente = Cliente(settings.HOST_NOMES, settings.PORTA_NOMES)
-    if cliente.conecta_servidor():
+    cliente = Cliente()
+    if cliente.conecta_servidor(settings.HOST_NOMES, settings.PORTA_NOMES):
 
-        cliente.enviar_mensagem(operacao, lista_chaves[2])
-        servidor = cliente.receber_mensagem(lista_chaves[0])
+        cliente.enviar_mensagem(operacao)
+        servidor = cliente.receber_mensagem()
+        print servidor
         cliente.fechar_conexao()
-        """
-        Obtém a chave pública do servidor de funções
-        """
-        lista_chaves.append(Funcoes_crypt().troca_chaves_servidor_funcoes(servidor, lista_chaves[1]))
-        cliente = Cliente(servidor, settings.PORTA_FUNCOES)
-        
-        if cliente.conecta_servidor():
 
-            cliente.enviar_mensagem('{0}_{1}_{2}_'.format(operacao, n1, n2), lista_chaves[3])
-            resposta = cliente.receber_mensagem(lista_chaves[0])
+        cliente = Cliente()
+        if cliente.conecta_servidor(servidor, settings.PORTA_FUNCOES):
+
+            cliente.enviar_mensagem('{0}_{1}_{2}_'.format(operacao, n1, n2))
+            resposta = cliente.receber_mensagem()
             cliente.fechar_conexao()
             return resposta
     else:
-        return 'Impossível Calcular'
+        return 'ERRO'

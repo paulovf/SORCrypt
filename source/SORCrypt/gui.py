@@ -7,16 +7,15 @@ Modulo responsavel por criar as interface gráficas do software.
 from gi.repository import Gtk, Gdk
 import settings
 from cliente import realiza_operacao
-from funcoes_crypt import Funcoes_crypt
-from arquivo_objeto import Arquivo_objeto
+
 
 class Calculadora:
     """
     Interface Gráfica da Calculadora do SORCrypt.
     """
 
-    def __init__(self, lista_chaves):
-        self.lista_chaves = lista_chaves
+    def __init__(self):
+
         self.janela = Gtk.Window()
         self.janela.set_title("SORCrypt")
         self.janela.set_size_request(250, 280)
@@ -189,22 +188,22 @@ class Calculadora:
             n2 = self.segundaOperacao
             resultado = 0
             if self.tipoOperacao == 1:
-                resultado = realiza_operacao(settings.SOMA, n1, n2, self.lista_chaves)
+                resultado = realiza_operacao(settings.SOMA, n1, n2)
                 self.atualizaStatusBar('Realizando operacao de SOMA...')
             elif self.tipoOperacao == 2:
-                resultado = realiza_operacao(settings.SUBTRACAO, n1, n2, self.lista_chaves)
+                resultado = realiza_operacao(settings.SUBTRACAO, n1, n2)
                 self.atualizaStatusBar('Realizando operacao de SUBTRACAO...')
             elif self.tipoOperacao == 3:
-                resultado = realiza_operacao(settings.PRODUTO, n1, n2, self.lista_chaves)
+                resultado = realiza_operacao(settings.PRODUTO, n1, n2)
                 self.atualizaStatusBar('Realizando operacao de PRODUTO...')
             elif self.tipoOperacao == 4:
-                resultado = realiza_operacao(settings.DIVISAO, n1, n2, self.lista_chaves)
+                resultado = realiza_operacao(settings.DIVISAO, n1, n2)
                 self.atualizaStatusBar('Realizando operacao de DIVISAO...')
             elif self.tipoOperacao == 5:
-                resultado = realiza_operacao(settings.PORCENTAGEM, n1, n2, self.lista_chaves)
+                resultado = realiza_operacao(settings.PORCENTAGEM, n1, n2)
                 self.atualizaStatusBar('Realizando operacao de PORCENTAGEM...')
             elif self.tipoOperacao == 6:
-                resultado = realiza_operacao(settings.FATORIAL, n1, n2, self.lista_chaves)
+                resultado = realiza_operacao(settings.FATORIAL, n1, n2)
                 self.atualizaStatusBar('Realizando operacao de FATORIAL...')
             if resultado == 'ERRO':
                 self.campoTexto.set_text('')
@@ -255,7 +254,5 @@ class CustomToolbar(Gtk.Toolbar):
 
 
 if __name__ == "__main__":
-    f = Funcoes_crypt()
-    lista_chaves = f.obter_chaves_de_acesso()
-    c = Calculadora(lista_chaves)
+    c = Calculadora()
     Gtk.main()
