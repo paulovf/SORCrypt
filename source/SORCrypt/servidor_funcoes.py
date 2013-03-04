@@ -113,7 +113,11 @@ def trata_cliente(conexao, endereco, chavePrivada, chavePublica):
     elif requisicao[0] == settings.PORCENTAGEM:
         resposta = porcentagem(conexao, requisicao)
     
-    resposta = chavePublicaCliente.encrypt(resposta.encode('ascii', 'ignore'), 32)[0]
+    try:
+        resposta = chavePublicaCliente.encrypt(resposta.encode('ascii', 'ignore'), 32)[0]
+    except:
+        resposta = 'GRANDE'
+        resposta = chavePublicaCliente.encrypt(resposta.encode('ascii', 'ignore'), 32)[0]
     conexao.send(resposta)
 
     # Após a requisição ser realizada, a conexão é fechada.

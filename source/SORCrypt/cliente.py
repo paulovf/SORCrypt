@@ -68,7 +68,6 @@ def realiza_operacao(operacao, n1, n2):
 
         cliente.enviar_mensagem(operacao)
         servidor = cliente.receber_mensagem()
-        print servidor
         cliente.fechar_conexao()
 
         cliente = Cliente()
@@ -79,4 +78,4 @@ def realiza_operacao(operacao, n1, n2):
             cliente.fechar_conexao()
             return resposta
     else:
-        return 'ERRO'
+        return 'CONEXAO'

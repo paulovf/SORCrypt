@@ -208,6 +208,12 @@ class Calculadora:
             if resultado == 'ERRO':
                 self.campoTexto.set_text('')
                 self.atualizaStatusBar('Erro ao Realizar Operacao...')
+            elif resultado == 'GRANDE':
+                self.campoTexto.set_text('')
+                self.atualizaStatusBar('Erro de Mensagem Muito Grande...')
+            elif resultado == 'CONEXAO':
+                self.campoTexto.set_text('')
+                self.atualizaStatusBar('Erro ao Realizar Conexao...')
             else:
                 self.atualizaStatusBar('Sucesso ao Realizar Operacao!')
                 self.campoTexto.set_text(str(resultado))
