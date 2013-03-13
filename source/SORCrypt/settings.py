@@ -1,4 +1,7 @@
-#coding: utf-8
+# coding: utf-8
+# @author: Charles Tim Batista Garrocho; Paulo Vitor Francisco
+# @contact: charles.garrocho@gmail.com; paulovfrancisco@gmail.com
+# @copyright: (C) 2013 Python Software Open Source
 
 """
 Modulo responsavel pelas configuracoes globais do software.
@@ -24,4 +27,5 @@ FUNCOES = 'FUNC'
 # Tamanho das Mensagens de requisicao.
 TAM_MSG = 8889
 
+# Caminho do Arquivo de nomes.
 SERVIDORES = '../arquivo/nomes.txt'
