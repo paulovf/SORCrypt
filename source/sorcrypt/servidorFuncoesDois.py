@@ -95,6 +95,7 @@ def loop_servidor():
     chavePublica = chavePrivada.publickey()
 
     soquete = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    soquete.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     soquete.bind((settings.HOST_FUNCOES, settings.PORTA_FUNCOES))
     soquete.listen(settings.LISTEN)
 

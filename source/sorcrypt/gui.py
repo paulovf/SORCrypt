@@ -209,18 +209,21 @@ class Calculadora:
             elif self.tipoOperacao == 6:
                 resultado = realiza_operacao(settings.FATORIAL, n1, n2)
                 self.atualizaStatusBar('Realizando operacao de FATORIAL...')
-            if resultado == 'ERRO':
+            if resultado[0] == 'False':
                 self.campoTexto.set_text('')
                 self.atualizaStatusBar('Erro ao Realizar Operacao...')
-            elif resultado == 'GRANDE':
+            elif resultado[0] == 'True' and resultado[1] == 'GRANDE':
                 self.campoTexto.set_text('')
                 self.atualizaStatusBar('Erro de Mensagem Muito Grande...')
-            elif resultado == 'CONEXAO':
+            elif resultado[0] == 'True' and resultado[1] == 'CONEXAO':
                 self.campoTexto.set_text('')
                 self.atualizaStatusBar('Erro ao Realizar Conexao...')
+            elif resultado[0] == 'True' and resultado[1] == 'ERRO':
+                self.campoTexto.set_text('')
+                self.atualizaStatusBar('Impossivel Realizar Operacao...')
             else:
                 self.atualizaStatusBar('Sucesso ao Realizar Operacao!')
-                self.campoTexto.set_text(str(resultado))
+                self.campoTexto.set_text(str(resultado[1]))
 
     def chamar_help(self, evento, janela):
         DialogoHelp(janela)

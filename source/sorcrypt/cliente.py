@@ -33,14 +33,17 @@ class Cliente:
         """
         try:
             self.soquete = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.soquete.settimeout(1)
             self.soquete.connect((host, porta))
-            return True
-        except Exception, error:
-            return False
+            return ['True']
+        except socket.timeout:
+            return ['False', 'Servidor Desconectado']
+        except socket.error:
+            return ['False', 'Sem Conexão']
 
     def enviar_mensagem(self, mensagem):
         """
-        Conecta a um host e porta, e envia a mensagem.
+        Envia uma mensagem.
         """
         self.soquete.send(pickle.dumps(self.chavePublica))
         msgChavePublicaServidor = self.soquete.recv(1024)
@@ -67,18 +70,22 @@ def realiza_operacao(operacao, n1, n2):
     Realiza uma determinada operação com um servidor.
     """
     cliente = Cliente()
-    if cliente.conecta_servidor(settings.HOST_NOMES, settings.PORTA_NOMES):
+    op = cliente.conecta_servidor(settings.HOST_NOMES, settings.PORTA_NOMES)
+    if op[0] == 'True':
 
         cliente.enviar_mensagem(operacao)
         servidor = cliente.receber_mensagem()
         cliente.fechar_conexao()
 
         cliente = Cliente()
-        if cliente.conecta_servidor(servidor, settings.PORTA_FUNCOES):
+        op = cliente.conecta_servidor(servidor, settings.PORTA_FUNCOES)
+        if op[0] == 'True':
 
             cliente.enviar_mensagem('{0}_{1}_{2}_'.format(operacao, n1, n2))
             resposta = cliente.receber_mensagem()
             cliente.fechar_conexao()
-            return resposta
+            return ['True', resposta]
+        else:
+            return ['False', op[1]]
     else:
-        return 'CONEXAO'
+        return ['False', op[1]]
