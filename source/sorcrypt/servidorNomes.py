@@ -11,7 +11,6 @@ import socket
 import pickle
 import settings
 from json import loads
-from cliente import Cliente
 from threading import Thread
 from Crypto.PublicKey import RSA
 from Crypto.Util import randpool
@@ -66,6 +65,7 @@ def loop_servidor():
     chavePublica = chavePrivada.publickey()
 
     soquete = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    soquete.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     soquete.bind((settings.HOST_NOMES, settings.PORTA_NOMES))
     soquete.listen(settings.LISTEN)
 
